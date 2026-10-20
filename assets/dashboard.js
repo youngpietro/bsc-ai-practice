@@ -318,7 +318,6 @@
 
   function renderAll() {
     APP.renderTopbar(); renderHero(); renderSugs(); renderCourses(); renderStats(); renderBadges(); renderRecord();
-    $("#countMe").checked = APP.S.profile.countMe !== false;
   }
 
   // ---------- events ----------
@@ -329,11 +328,6 @@
   });
   $("#nameCancel").onclick = () => { editingName = false; renderHero(); };
   $("#goal").onchange = e => { APP.S.profile.goal = +e.target.value || 25; APP.save(); renderAll(); };
-  $("#countMe").checked = APP.S.profile.countMe !== false;
-  $("#countMe").onchange = e => {
-    APP.S.profile.countMe = e.target.checked; APP.save();
-    APP.toast(e.target.checked ? "You're counted again" : "Not counted any more", e.target.checked ? "Thanks! It helps to see how the site is used." : "Your visits won't be added to the visitor count from now on.");
-  };
   $("#export").onclick = () => APP.exportData();
   $("#importFile").onchange = e => {
     const f = e.target.files[0]; if (!f) return;

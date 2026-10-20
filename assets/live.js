@@ -87,10 +87,10 @@
     try { fetch(`${SUPABASE_URL}/rest/v1/rpc/leave`, { method: "POST", headers: headers(), body: JSON.stringify({ p_id: tab }), keepalive: true }).catch(() => {}); } catch (e) { /* ignore */ }
   }
 
-  // Anonymous visitor code (random, per browser) so the site can count people over time. Opt-out on the dashboard.
+  // Anonymous visitor code (random, per browser) so the site can count every person over time.
   function visitorId() {
     const p = window.APP && window.APP.S.profile;
-    if (!p || p.countMe === false) return null;
+    if (!p) return null;
     if (!p.visitorId) { p.visitorId = window.APP.util.newId(); window.APP.save(); }
     return p.visitorId;
   }
