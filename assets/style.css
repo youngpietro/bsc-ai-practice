@@ -283,6 +283,27 @@ details.topics[open] > summary::before { content: "▾ "; }
 .badge div > span { font-size: .8rem; color: var(--muted); display: block; line-height: 1.35; }
 .badge.locked b { color: var(--muted); }
 
+/* Verified study record card (dashboard) */
+.small { font-size: .82rem; }
+.record { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.rec-intro { display: flex; gap: 14px; align-items: flex-start; }
+.rec-intro .medal { flex: none; background: var(--good-soft); color: var(--good); box-shadow: inset 0 0 0 2px var(--good); font-size: 18px; }
+.rec-intro b { display: block; margin-bottom: 4px; }
+.rec-intro p + p { margin-top: 6px; }
+.rec-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.rec-foot { border-top: 1px solid var(--line-soft); padding-top: 12px; }
+.rec-status { display: flex; gap: 10px; align-items: center; font-size: .92rem; }
+.rec-status .pulse { flex: none; }
+.rec-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.rec-tiles div { background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; }
+.rec-tiles span { font-size: .78rem; color: var(--muted); }
+.rec-tiles b { font-size: 1.35rem; font-weight: 600; }
+.rec-share, .rec-link { display: flex; flex-direction: column; gap: 6px; }
+.rec-share label { font-size: .86rem; font-weight: 500; }
+.rec-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.rec-row input { flex: 1 1 240px; min-width: 0; }
+.rec-row input[readonly] { font-family: var(--f-mono); font-size: .82rem; color: var(--muted); }
+
 .datarow { padding: 16px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
 .datarow p { flex: 1 1 280px; font-size: .88rem; color: var(--muted); }
 .datarow .btns { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -411,4 +432,37 @@ details.topics[open] > summary::before { content: "▾ "; }
 @media (prefers-reduced-motion: no-preference) {
   .opt, .btn, .chip, .navlinks a { transition: border-color .12s, background-color .12s, color .12s; }
   .pbar i, .act-bars span { transition: width .3s ease, height .3s ease; }
+}
+
+/* ---------- Public study-record page ---------- */
+.lookup { padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.lookup h1 { font-family: var(--f-serif); font-size: 1.6rem; font-weight: 600; }
+.lookup-msg:not(:empty) { color: var(--bad); font-size: .9rem; }
+.report { display: flex; flex-direction: column; gap: 22px; }
+.rep-head { display: flex; flex-direction: column; gap: 6px; }
+.rep-head h1 { font-family: var(--f-serif); font-size: clamp(1.6rem, 4.5vw, 2.2rem); font-weight: 600; }
+.verify { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 12px; background: var(--good-soft); border: 1px solid color-mix(in srgb, var(--good) 40%, transparent); }
+.verify .medal { flex: none; background: var(--good); color: var(--surface); box-shadow: none; font-size: 18px; }
+.verify b { display: block; margin-bottom: 3px; }
+.verify p { font-size: .9rem; }
+.rep-bars { display: grid; gap: 3px; align-items: end; height: 110px; }
+.rep-bars .rb { height: 100%; display: flex; align-items: flex-end; }
+.rep-bars .rb span { display: block; width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; }
+.rep-bars .rb.zero span { background: var(--line-soft); height: 3px !important; border-radius: 2px; }
+.rep-axis { display: grid; gap: 3px; margin-top: 6px; font: 500 10px var(--f-mono); color: var(--muted); text-align: center; white-space: nowrap; }
+.rep-note { font-size: .84rem; max-width: 72ch; }
+.print-only { display: none; }
+
+@media print {
+  :root:root:root {
+    --bg: #fff; --surface: #fff; --surface-2: #F6F7F4; --fg: #111; --muted: #555; --line: #CCC; --line-soft: #E4E4E4;
+    --accent: #2F48BE; --good: #1C7845; --good-soft: #E9F5EE; --bad: #B3362A; --ai: #3048C0; --psy: #B4531C; --shadow: none;
+    color-scheme: light;
+  }
+  body { background: #fff; font-size: 12pt; }
+  .topbar, .no-print, .toasts, .tip { display: none !important; }
+  .print-only { display: block; font-family: var(--f-mono); font-size: 10pt; }
+  .page { padding-top: 0; }
+  .card, .verify, section { break-inside: avoid; }
+  .rep-bars .rb span, .verify .medal { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

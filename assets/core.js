@@ -12,6 +12,13 @@
   const slug = s => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const pct = x => (x == null ? "–" : Math.round(x * 100) + "%");
   const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + "s")}`;
+  function duration(sec) {
+    const m = Math.round((sec || 0) / 60);
+    if (m < 60) return `${m} min`;
+    return `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`;
+  }
+  const newId = () => (crypto.randomUUID ? crypto.randomUUID()
+    : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)));
   function dayKey(d = new Date()) {
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   }
@@ -112,7 +119,11 @@
     let goalReached = false;
     if (day.n >= S.profile.goal && S.flags.goalDay !== dk) { S.flags.goalDay = dk; goalReached = true; }
     save();
-    if (window.LIVE) window.LIVE.recordAnswer(qid.split(":")[0], ok); // anonymous +1 to the site-wide total
+    if (window.LIVE) {
+      const cid = qid.split(":")[0], c = courseById(cid), q = c && c.byId[qid];
+      window.LIVE.recordAnswer(cid, ok);                         // anonymous +1 to the site-wide total
+      if (q) window.LIVE.logAnswer(cid, q.topic, qid, ok);       // only saved if this student turned on their verified record
+    }
     return { unlocked, goalReached, comeback };
   }
   function clearAnswers(ids) { ids.forEach(id => { delete S.ans[id]; }); save(); }
@@ -339,13 +350,19 @@
     if (!d || typeof d !== "object" || !d.ans || !d.hist) throw new Error("This file is not a progress export from this site.");
     S = normalize(d); checkBadges(); save(); applyTheme();
   }
-  function resetAll() { const theme = S.settings.theme; S = blank(); S.settings.theme = theme; save(); }
+  // Clears local progress. The verified record lives on the server and has its own delete button, so keep its key.
+  function resetAll() {
+    const theme = S.settings.theme, { studyId, record, recordSince } = S.profile;
+    S = blank(); S.settings.theme = theme;
+    Object.assign(S.profile, { studyId, record, recordSince });
+    save();
+  }
 
   window.APP = {
     TERM, COURSES, courseById, BADGES, LEVEL_LABEL,
     get S() { return S; }, save, onChange: f => listeners.push(f),
     recordAnswer, clearAnswers, courseStats, lifetime, dayStreak, todayCount, checkBadges, suggestions, examInfo,
     renderTopbar, renderLiveChip, toast, announce, exportData, importData, resetAll,
-    util: { $, esc, pct, plural, dayKey, slug }
+    util: { $, esc, pct, plural, dayKey, slug, duration, newId }
   };
 })();

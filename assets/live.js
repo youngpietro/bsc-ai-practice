@@ -45,6 +45,32 @@
     listeners.forEach(f => { try { f(last, failed); } catch (e) { /* keep others running */ } });
   }
 
+  // ---------- verified study record (opt-in; see supabase/study-record.sql) ----------
+  let lastInteract = Date.now();
+  ["pointerdown", "keydown", "scroll", "touchstart"].forEach(ev =>
+    window.addEventListener(ev, () => { lastInteract = Date.now(); }, { passive: true }));
+  function recording() {
+    const p = window.APP && window.APP.S.profile;
+    return p && p.record && p.studyId ? p.studyId : null;
+  }
+  function logAnswer(course, topic, question, ok) {
+    const sid = recording();
+    if (!enabled || !sid) return;
+    rpc("log_answer", { p_student: sid, p_course: course, p_topic: topic, p_question: question, p_correct: !!ok }).catch(() => {});
+  }
+  // Active time only counts on quiz pages, while the tab is visible and the student did something in the last 3 minutes.
+  function studyBeat() {
+    const sid = recording();
+    if (!sid || pageCourse === "site" || Date.now() - lastInteract > 180000) return;
+    rpc("study_beat", { p_student: sid }).catch(() => {});
+  }
+  const record = {
+    mine: sid => rpc("my_record", { p_student: sid }),
+    publish: (sid, name) => rpc("publish_report", { p_student: sid, p_name: name || "" }),
+    erase: sid => rpc("delete_my_record", { p_student: sid }),
+    get: code => rpc("get_report", { p_code: code })
+  };
+
   async function beat() {
     if (!enabled || document.visibilityState === "hidden") return;
     try {
@@ -53,6 +79,7 @@
       last = Object.assign({}, res, { at: Date.now() });
       failed = false;
     } catch (e) { failed = true; }
+    studyBeat();
     emit();
   }
   function leave() {
@@ -82,7 +109,7 @@
     get last() { return last; },
     get failed() { return failed; },
     onUpdate: f => listeners.push(f),
-    recordAnswer, stats, amsDay, refresh: beat
+    recordAnswer, logAnswer, record, stats, amsDay, refresh: beat
   };
 
   if (enabled) {

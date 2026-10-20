@@ -213,7 +213,110 @@
     }).join("");
   }
 
-  function renderAll() { APP.renderTopbar(); renderHero(); renderSugs(); renderCourses(); renderStats(); renderBadges(); }
+  // ---------- verified study record ----------
+  const REPORT_URL = code => new URL(`report.html?code=${encodeURIComponent(code)}`, location.href).href;
+  let rec = { data: null, error: false, busy: false, eraseArmed: false };
+  async function loadRecord() {
+    const p = APP.S.profile;
+    if (!window.LIVE || !LIVE.enabled || !p.studyId) { renderRecord(); return; }
+    try { rec.data = await LIVE.record.mine(p.studyId); rec.error = false; }
+    catch (e) { rec.error = true; }
+    renderRecord();
+  }
+  function renderRecord() {
+    const sec = $("#recordSec"), box = $("#record");
+    if (!window.LIVE || !LIVE.enabled) { sec.hidden = true; return; }
+    sec.hidden = false;
+    const p = APP.S.profile, d = rec.data;
+    if (!p.record) {
+      box.innerHTML = `
+        <div class="rec-intro">
+          <span class="medal" aria-hidden="true">✓</span>
+          <div>
+            <b>Need proof that you've been practising?</b>
+            <p>Turn this on and every answer, plus your active study time, is also saved on the server with the server's own clock. You can't edit or backdate it, so you can share a link to your report, or save it as a PDF, for a mentor, a study advisor or yourself.</p>
+            <p class="muted small">Saved under a random code kept in this browser, never your email. Only activity from the moment you turn it on counts. You can pause or delete it any time.</p>
+          </div>
+        </div>
+        <div class="rec-actions">
+          <button class="btn primary" type="button" id="recOn">${p.studyId && d && d.answers ? "Resume recording" : "Turn on verified record"}</button>
+          ${p.studyId && d && d.answers ? `<span class="muted small">Paused. ${plural(d.answers, "answer")} already saved.</span>` : ""}
+        </div>`;
+      $("#recOn").onclick = () => {
+        if (!p.studyId) p.studyId = APP.util.newId();
+        if (!p.recordSince) p.recordSince = Date.now();
+        p.record = true; APP.save(); renderRecord(); loadRecord();
+        APP.toast("Verified record is on", "From now on your answers and study time are saved on the server.", "✓");
+      };
+      return;
+    }
+    if (rec.error) {
+      box.innerHTML = `<p class="muted">Couldn't reach the server for your record right now. Your answers are still being saved; try again in a minute.</p><div class="rec-actions"><button class="btn" type="button" id="recRetry">Try again</button></div>`;
+      $("#recRetry").onclick = loadRecord;
+      return;
+    }
+    const since = new Date(p.recordSince || Date.now()).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    const days = d ? d.days.filter(x => x.answers || x.seconds).length : 0;
+    const tiles = [
+      ["Answers recorded", d ? d.answers.toLocaleString("en") : "…"],
+      ["Answered right", d ? pct(d.answers ? d.correct / d.answers : null) : "…"],
+      ["Active study time", d ? APP.util.duration(d.seconds) : "…"],
+      ["Days practised", d ? days : "…"]
+    ];
+    const link = d && d.code ? REPORT_URL(d.code) : null;
+    box.innerHTML = `
+      <div class="rec-status"><i class="pulse" aria-hidden="true"></i><span>Recording since <b>${esc(since)}</b>. Every answer you give is saved with the server's time.</span></div>
+      <div class="rec-tiles">${tiles.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(String(v))}</b></div>`).join("")}</div>
+      <form class="rec-share" id="recForm">
+        <label for="recName">Name on your report <span class="muted">(optional, shown to anyone with the link)</span></label>
+        <div class="rec-row">
+          <input type="text" id="recName" maxlength="60" placeholder="e.g. your full name or student number" value="${esc(d && d.name ? d.name : "")}">
+          <button class="btn primary" type="submit"${rec.busy ? " disabled" : ""}>${link ? "Update name" : "Create share link"}</button>
+        </div>
+      </form>
+      ${link ? `
+      <div class="rec-link">
+        <span class="muted small">Your report · code <b class="mono">${esc(d.code)}</b></span>
+        <div class="rec-row">
+          <input type="text" readonly value="${esc(link)}" id="recUrl" aria-label="Report link">
+          <button class="btn" type="button" id="recCopy">Copy link</button>
+          <a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Open report</a>
+        </div>
+      </div>` : ""}
+      <div class="rec-actions rec-foot">
+        <button class="btn ghost sm" type="button" id="recPause">Pause recording</button>
+        <button class="btn ghost sm warn" type="button" id="recErase">${rec.eraseArmed ? "Click again to delete everything on the server" : "Delete my record"}</button>
+      </div>`;
+    $("#recForm").onsubmit = async e => {
+      e.preventDefault();
+      const name = $("#recName").value.trim(); // read before re-rendering replaces the input
+      rec.busy = true; renderRecord();
+      try {
+        await LIVE.record.publish(p.studyId, name);
+        rec.busy = false; await loadRecord();
+        APP.toast("Share link ready", "Anyone with the link can check your record.", "✓");
+      } catch (err) { rec.busy = false; renderRecord(); APP.toast("Couldn't create the link", "Check your connection and try again."); }
+    };
+    const copy = $("#recCopy");
+    if (copy) copy.onclick = () => {
+      const u = $("#recUrl"); u.select();
+      (navigator.clipboard ? navigator.clipboard.writeText(u.value) : Promise.reject()).then(
+        () => APP.toast("Link copied", ""), () => { document.execCommand("copy"); APP.toast("Link copied", ""); });
+    };
+    $("#recPause").onclick = () => { p.record = false; APP.save(); renderRecord(); };
+    $("#recErase").onclick = async () => {
+      if (!rec.eraseArmed) { rec.eraseArmed = true; renderRecord(); setTimeout(() => { rec.eraseArmed = false; renderRecord(); }, 4000); return; }
+      rec.eraseArmed = false;
+      try {
+        await LIVE.record.erase(p.studyId);
+        Object.assign(p, { record: false, studyId: null, recordSince: null }); APP.save();
+        rec.data = null; renderRecord();
+        APP.toast("Record deleted", "Everything saved on the server for you is gone.");
+      } catch (err) { APP.toast("Couldn't delete right now", "Check your connection and try again."); }
+    };
+  }
+
+  function renderAll() { APP.renderTopbar(); renderHero(); renderSugs(); renderCourses(); renderStats(); renderBadges(); renderRecord(); }
 
   // ---------- events ----------
   $("#nameForm").addEventListener("submit", e => {
@@ -248,6 +351,7 @@
   if (window.LIVE && LIVE.enabled) {
     LIVE.onUpdate(renderCommunity);
     loadCommunity();
+    loadRecord();
     setInterval(() => { if (document.visibilityState === "visible") loadCommunity(); }, 60000);
   }
 

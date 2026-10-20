@@ -33,6 +33,7 @@ Then open http://localhost:8000.
 1. Add a data file in `data/` (see `ai-data.js` or `psych-data.js` for the format).
 2. Register it in `buildCourses()` in `assets/core.js`.
 3. Copy `intro-ai.html` to a new page and set `data-course` on `<body>`.
+4. After changing any JS/CSS, bump the `?v=` number on the script and style links in all pages so browsers fetch the new files.
 
 ## Disclaimer
 

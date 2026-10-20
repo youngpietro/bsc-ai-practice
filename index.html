@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=4">
 <script>try{var s=JSON.parse(localStorage.getItem("bscai-practice.v1")||"{}").settings;if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme)}catch(e){}</script>
 </head>
 <body data-page="home">
@@ -81,6 +81,11 @@
     </div>
   </section>
 
+  <section class="section" id="recordSec" hidden>
+    <div class="section-h"><h2>Verified study record</h2><span class="aside">Proof of your practice</span></div>
+    <div class="card record" id="record"></div>
+  </section>
+
   <section class="section">
     <div class="section-h"><h2>Achievements</h2><span class="aside" id="badgeCount"></span></div>
     <div class="badges" id="badges"></div>
@@ -89,7 +94,7 @@
   <section class="section">
     <div class="section-h"><h2>Your data</h2></div>
     <div class="card datarow">
-      <p>Your progress is saved in this browser only, with no account. The site only shares anonymous totals: +1 for each answer, and a live count of open tabs. No names, emails or IDs. To continue on another device or browser, export your progress here and import the file there.</p>
+      <p>Your progress is saved in this browser only, with no account. The site only shares anonymous totals: +1 for each answer, and a live count of open tabs. No names, emails or IDs, unless you turn on your verified study record on the dashboard. To continue on another device or browser, export your progress here and import the file there.</p>
       <div class="btns">
         <button class="btn" id="export" type="button">Export progress</button>
         <label class="btn" for="importFile">Import progress</label>
@@ -102,14 +107,15 @@
 
 <footer class="foot">
   <p><b>Unofficial.</b> Made by students for students. Not affiliated with or endorsed by Vrije Universiteit Amsterdam. Questions are based on the 2026–2027 course material and may contain mistakes, so check anything that looks off against the lectures.</p>
+  <p>Mentor or study advisor? <a href="report.html">Check a student's study record</a> with the code from their report.</p>
   <p>Courses get added each period. Intro to AI covers every lecture except the Introduction and Discrete Mathematics.</p>
   <p>Spotted a wrong answer or a typo? <a href="https://github.com/youngpietro/bsc-ai-practice/issues/new" target="_blank" rel="noopener">Report it on GitHub</a>.</p>
 </footer>
 
-<script src="data/ai-data.js"></script>
-<script src="data/psych-data.js"></script>
-<script src="assets/core.js"></script>
-<script src="assets/live.js"></script>
-<script src="assets/dashboard.js"></script>
+<script src="data/ai-data.js?v=4"></script>
+<script src="data/psych-data.js?v=4"></script>
+<script src="assets/core.js?v=4"></script>
+<script src="assets/live.js?v=4"></script>
+<script src="assets/dashboard.js?v=4"></script>
 </body>
 </html>

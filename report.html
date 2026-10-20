@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Study record · BSc AI Practice</title>
+<meta name="description" content="Check a student's verified practice record on BSc AI Practice.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css?v=4">
+<script>try{var s=JSON.parse(localStorage.getItem("bscai-practice.v1")||"{}").settings;if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme)}catch(e){}</script>
+</head>
+<body data-page="report">
+<header class="topbar" id="topbar"></header>
+
+<main class="page narrow">
+  <section class="card lookup" id="lookup" hidden>
+    <h1>Check a study record</h1>
+    <p class="muted">Enter the code from a student's report, for example <span class="mono">K7Q2-9XMB</span>.</p>
+    <form class="rec-row" id="lookupForm">
+      <label class="sr" for="codeInput">Report code</label>
+      <input id="codeInput" type="text" maxlength="12" placeholder="XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+      <button class="btn primary" type="submit">Check</button>
+    </form>
+    <p class="lookup-msg" id="lookupMsg" role="status"></p>
+  </section>
+
+  <p class="muted" id="status" role="status">Checking the record…</p>
+  <article class="report" id="report" hidden></article>
+</main>
+
+<footer class="foot no-print">
+  <p><b>Unofficial.</b> BSc AI Practice is made by students for students and is not affiliated with or endorsed by Vrije Universiteit Amsterdam.</p>
+</footer>
+
+<script src="data/ai-data.js?v=4"></script>
+<script src="data/psych-data.js?v=4"></script>
+<script src="assets/core.js?v=4"></script>
+<script src="assets/live.js?v=4"></script>
+<script src="assets/report.js?v=4"></script>
+</body>
+</html>
