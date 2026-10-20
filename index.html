@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BSc AI Practice</title>
+<meta name="description" content="Free, unofficial practice quizzes for VU Amsterdam BSc Artificial Intelligence students, 2026–2027 Period 1: Introduction to AI and Introduction to Psychology & its Methods. Tracks your progress and tells you what to study next.">
+<meta property="og:title" content="BSc AI Practice · 2026–2027 Period 1">
+<meta property="og:description" content="Practice quizzes for Intro to AI and Intro to Psychology & its Methods, with progress tracking, achievements and study suggestions.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>try{var s=JSON.parse(localStorage.getItem("bscai-practice.v1")||"{}").settings;if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme)}catch(e){}</script>
+</head>
+<body data-page="home">
+<header class="topbar" id="topbar"></header>
+
+<main class="page">
+  <section class="card hero">
+    <div>
+      <div class="eyebrow">For VU Amsterdam BSc AI students · 2026–2027 · Period 1</div>
+      <h1 id="greet" style="margin-top:8px">Welcome</h1>
+      <p class="lead" id="lead"></p>
+      <form class="namebox" id="nameForm" hidden>
+        <label class="sr" for="nameInput">Nickname</label>
+        <input id="nameInput" type="text" maxlength="24" placeholder="Pick a nickname" autocomplete="nickname">
+        <button class="btn primary" type="submit">Save</button>
+        <button class="btn ghost" type="button" id="nameCancel" hidden>Cancel</button>
+      </form>
+      <div class="exam-row" id="exams"></div>
+    </div>
+    <div class="ring-wrap">
+      <div class="ring" id="ring" role="img">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="track" cx="60" cy="60" r="50" fill="none" stroke-width="10"/>
+          <circle class="val" id="ringVal" cx="60" cy="60" r="50" fill="none" stroke-width="10" stroke-dasharray="0 400"/>
+        </svg>
+        <div class="ring-label"><b id="ringNum">0</b><span id="ringOf">of 25 today</span></div>
+      </div>
+      <label class="goal-row">Daily goal
+        <select id="goal">
+          <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-h"><h2>What to study next</h2><span class="aside">Updates as you answer</span></div>
+    <div class="card sugs" id="sugs"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-h"><h2>Courses this period</h2><span class="aside">Coloured blocks = your level per topic</span></div>
+    <div class="courses" id="courses"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-h"><h2>Your stats</h2><span class="aside" id="sinceLine"></span></div>
+    <div class="stats" id="stats"></div>
+    <div class="card activity">
+      <div class="section-h" style="margin-bottom:12px"><h2 style="font-size:.92rem">Questions per day</h2><span class="aside">Last 14 days</span></div>
+      <div class="act-bars" id="actBars"></div>
+      <div class="act-base"></div>
+      <div class="act-axis" id="actAxis"></div>
+      <table class="sr" id="actTable"></table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-h"><h2>Achievements</h2><span class="aside" id="badgeCount"></span></div>
+    <div class="badges" id="badges"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-h"><h2>Your data</h2></div>
+    <div class="card datarow">
+      <p>Progress is saved in this browser only. There is no account and nothing is sent anywhere. To continue on another device or browser, export your progress here and import the file there.</p>
+      <div class="btns">
+        <button class="btn" id="export" type="button">Export progress</button>
+        <label class="btn" for="importFile">Import progress</label>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+        <button class="btn warn" id="resetAll" type="button">Reset everything</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><b>Unofficial.</b> Made by students for students. Not affiliated with or endorsed by Vrije Universiteit Amsterdam. Questions are based on the 2026–2027 course material and may contain mistakes, so check anything that looks off against the lectures.</p>
+  <p>Courses get added each period. Intro to AI covers every lecture except the Introduction and Discrete Mathematics.</p>
+</footer>
+
+<script src="data/ai-data.js"></script>
+<script src="data/psych-data.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/dashboard.js"></script>
+</body>
+</html>
