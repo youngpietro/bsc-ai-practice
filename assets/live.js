@@ -87,9 +87,17 @@
     try { fetch(`${SUPABASE_URL}/rest/v1/rpc/leave`, { method: "POST", headers: headers(), body: JSON.stringify({ p_id: tab }), keepalive: true }).catch(() => {}); } catch (e) { /* ignore */ }
   }
 
+  // Anonymous visitor code (random, per browser) so the site can count people over time. Opt-out on the dashboard.
+  function visitorId() {
+    const p = window.APP && window.APP.S.profile;
+    if (!p || p.countMe === false) return null;
+    if (!p.visitorId) { p.visitorId = window.APP.util.newId(); window.APP.save(); }
+    return p.visitorId;
+  }
+
   function recordAnswer(course, ok) {
     if (!enabled || (course !== "ai" && course !== "psy")) return;
-    rpc("record_answer", { p_course: course, p_correct: !!ok }).catch(() => {});
+    rpc("record_answer", { p_course: course, p_correct: !!ok, p_visitor: visitorId() }).catch(() => {});
   }
 
   // All daily rows (a few per day, so this stays small for years).
@@ -113,6 +121,7 @@
   };
 
   if (enabled) {
+    if (isNewSession) { const v = visitorId(); if (v) rpc("visit", { p_visitor: v }).catch(() => {}); }
     beat();
     setInterval(beat, BEAT_MS);
     document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") beat(); else leave(); });

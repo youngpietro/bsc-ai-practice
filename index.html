@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=4">
+<link rel="stylesheet" href="assets/style.css?v=5">
 <script>try{var s=JSON.parse(localStorage.getItem("bscai-practice.v1")||"{}").settings;if(s&&(s.theme==="dark"||s.theme==="light"))document.documentElement.setAttribute("data-theme",s.theme)}catch(e){}</script>
 </head>
 <body data-page="home">
@@ -94,7 +94,11 @@
   <section class="section">
     <div class="section-h"><h2>Your data</h2></div>
     <div class="card datarow">
-      <p>Your progress is saved in this browser only, with no account. The site only shares anonymous totals: +1 for each answer, and a live count of open tabs. No names, emails or IDs, unless you turn on your verified study record on the dashboard. To continue on another device or browser, export your progress here and import the file there.</p>
+      <div class="privacy">
+        <p>Your progress is saved in this browser only, with no account. To continue on another device or browser, export your progress here and import the file there.</p>
+        <p><b>What the site counts:</b> to see how many people use it over time, your browser gets a random visitor code. The server stores when you visited and how many questions you answered under that code: no name, email or IP address. If you turn on your verified study record, the site owner can also see that record and any name you add to it.</p>
+        <label class="check"><input type="checkbox" id="countMe"> Include me in the anonymous visitor count</label>
+      </div>
       <div class="btns">
         <button class="btn" id="export" type="button">Export progress</button>
         <label class="btn" for="importFile">Import progress</label>
@@ -112,10 +116,10 @@
   <p>Spotted a wrong answer or a typo? <a href="https://github.com/youngpietro/bsc-ai-practice/issues/new" target="_blank" rel="noopener">Report it on GitHub</a>.</p>
 </footer>
 
-<script src="data/ai-data.js?v=4"></script>
-<script src="data/psych-data.js?v=4"></script>
-<script src="assets/core.js?v=4"></script>
-<script src="assets/live.js?v=4"></script>
-<script src="assets/dashboard.js?v=4"></script>
+<script src="data/ai-data.js?v=5"></script>
+<script src="data/psych-data.js?v=5"></script>
+<script src="assets/core.js?v=5"></script>
+<script src="assets/live.js?v=5"></script>
+<script src="assets/dashboard.js?v=5"></script>
 </body>
 </html>

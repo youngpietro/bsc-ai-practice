@@ -305,7 +305,11 @@ details.topics[open] > summary::before { content: "▾ "; }
 .rec-row input[readonly] { font-family: var(--f-mono); font-size: .82rem; color: var(--muted); }
 
 .datarow { padding: 16px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
-.datarow p { flex: 1 1 280px; font-size: .88rem; color: var(--muted); }
+.datarow p { font-size: .88rem; color: var(--muted); }
+.datarow .privacy { flex: 1 1 320px; display: flex; flex-direction: column; gap: 8px; }
+.datarow .privacy b { color: var(--fg); font-weight: 600; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: .88rem; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--accent); }
 .datarow .btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
 @media (max-width: 600px) {

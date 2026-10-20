@@ -73,7 +73,7 @@
   function blank() {
     return {
       v: 1,
-      profile: { name: "", goal: 25, created: Date.now() },
+      profile: { name: "", goal: 25, created: Date.now(), countMe: true },
       ans: {},       // current answer per question: { p: picked index, ok, at }
       hist: {},      // lifetime per question: { n: attempts, c: correct, w: wrong, fx: fixed-after-wrong }
       days: {},      // "YYYY-MM-DD": { n, c }
@@ -352,9 +352,9 @@
   }
   // Clears local progress. The verified record lives on the server and has its own delete button, so keep its key.
   function resetAll() {
-    const theme = S.settings.theme, { studyId, record, recordSince } = S.profile;
+    const theme = S.settings.theme, { studyId, record, recordSince, visitorId, countMe } = S.profile;
     S = blank(); S.settings.theme = theme;
-    Object.assign(S.profile, { studyId, record, recordSince });
+    Object.assign(S.profile, { studyId, record, recordSince, visitorId, countMe });
     save();
   }
 

@@ -235,7 +235,7 @@
           <div>
             <b>Need proof that you've been practising?</b>
             <p>Turn this on and every answer, plus your active study time, is also saved on the server with the server's own clock. You can't edit or backdate it, so you can share a link to your report, or save it as a PDF, for a mentor, a study advisor or yourself.</p>
-            <p class="muted small">Saved under a random code kept in this browser, never your email. Only activity from the moment you turn it on counts. You can pause or delete it any time.</p>
+            <p class="muted small">Saved under a random code kept in this browser, never your email. Only activity from the moment you turn it on counts. The site owner can see your record and any name you add. You can pause or delete it any time.</p>
           </div>
         </div>
         <div class="rec-actions">
@@ -316,7 +316,10 @@
     };
   }
 
-  function renderAll() { APP.renderTopbar(); renderHero(); renderSugs(); renderCourses(); renderStats(); renderBadges(); renderRecord(); }
+  function renderAll() {
+    APP.renderTopbar(); renderHero(); renderSugs(); renderCourses(); renderStats(); renderBadges(); renderRecord();
+    $("#countMe").checked = APP.S.profile.countMe !== false;
+  }
 
   // ---------- events ----------
   $("#nameForm").addEventListener("submit", e => {
@@ -326,6 +329,11 @@
   });
   $("#nameCancel").onclick = () => { editingName = false; renderHero(); };
   $("#goal").onchange = e => { APP.S.profile.goal = +e.target.value || 25; APP.save(); renderAll(); };
+  $("#countMe").checked = APP.S.profile.countMe !== false;
+  $("#countMe").onchange = e => {
+    APP.S.profile.countMe = e.target.checked; APP.save();
+    APP.toast(e.target.checked ? "You're counted again" : "Not counted any more", e.target.checked ? "Thanks! It helps to see how the site is used." : "Your visits won't be added to the visitor count from now on.");
+  };
   $("#export").onclick = () => APP.exportData();
   $("#importFile").onchange = e => {
     const f = e.target.files[0]; if (!f) return;
