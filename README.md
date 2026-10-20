@@ -36,4 +36,6 @@ Then open http://localhost:8000.
 
 ## Disclaimer
 
-Made by students for students. Not affiliated with or endorsed by Vrije Universiteit Amsterdam. Questions are based on the 2026–2027 course material and may contain mistakes: please open an issue if you spot one.
+Made by students for students. Not affiliated with or endorsed by Vrije Universiteit Amsterdam. Questions are based on the 2026–2027 course material and may contain mistakes: please [open an issue](https://github.com/youngpietro/bsc-ai-practice/issues/new) if you spot one.
+
+Live site: https://youngpietro.github.io/bsc-ai-practice/
