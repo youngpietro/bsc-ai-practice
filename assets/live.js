@@ -4,8 +4,8 @@
   "use strict";
 
   // Public values: the publishable key only allows what supabase/setup.sql permits (read totals, call 3 functions).
-  const SUPABASE_URL = "";
-  const SUPABASE_KEY = "";
+  const SUPABASE_URL = "https://jhxlhazevmleliwpqclh.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_9XP-8dR7eLO0nOYB_gQS4g_s5mcl4-D";
   const BEAT_MS = 45000;
   const TAB_KEY = "bscai-live-tab";
 
