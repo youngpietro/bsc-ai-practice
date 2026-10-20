@@ -140,20 +140,64 @@
     const first = Math.min(...Object.keys(S.days).map(d => Date.parse(d)).filter(Boolean), Infinity);
     $("#sinceLine").textContent = isFinite(first) ? "Since " + new Date(first).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "";
 
-    const days = [];
-    for (let k = 13; k >= 0; k--) { const d = new Date(); d.setDate(d.getDate() - k); days.push(d); }
-    const vals = days.map(d => S.days[dayKey(d)] || { n: 0, c: 0 });
-    const max = Math.max(10, ...vals.map(v => v.n));
-    $("#actBars").innerHTML = days.map((d, i) => {
-      const v = vals[i];
-      const label = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
-      const tipHtml = `<b>${esc(label)}</b>${v.n ? `${v.n} answered · ${v.c} right` : "No practice"}`;
-      return `<button type="button" class="${v.n ? "" : "zero"}" data-tip="${esc(tipHtml)}" aria-label="${esc(label)}: ${v.n} answered"><span style="height:${(100 * v.n / max).toFixed(1)}%"></span></button>`;
+    const rows = [];
+    for (let k = 13; k >= 0; k--) {
+      const d = new Date(); d.setDate(d.getDate() - k);
+      const v = S.days[dayKey(d)] || { n: 0, c: 0 };
+      rows.push({ key: dayKey(d), date: d, n: v.n, c: v.c });
+    }
+    barChart("act", rows, "Questions you answered per day, last 14 days", "No practice");
+  }
+
+  // 14 bars (one per day), with hover/focus tooltips and a screen-reader table twin.
+  function barChart(prefix, rows, caption, emptyText) {
+    const max = Math.max(10, ...rows.map(r => r.n));
+    const bars = $(`#${prefix}Bars`);
+    bars.innerHTML = rows.map(r => {
+      const label = r.date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+      const tipHtml = `<b>${esc(label)}</b>${r.n ? `${r.n.toLocaleString("en")} answered · ${r.c.toLocaleString("en")} right` : emptyText}`;
+      return `<button type="button" class="${r.n ? "" : "zero"}" data-tip="${esc(tipHtml)}" aria-label="${esc(label)}: ${r.n} answered"><span style="height:${(100 * r.n / max).toFixed(1)}%"></span></button>`;
     }).join("");
-    $("#actAxis").innerHTML = days.map((d, i) => `<span${i === 13 ? ' style="color:var(--fg);font-weight:600"' : ""}>${i === 13 ? "today" : d.getDate()}</span>`).join("");
-    $("#actTable").innerHTML = `<caption>Questions answered per day, last 14 days</caption><thead><tr><th>Day</th><th>Answered</th><th>Right</th></tr></thead><tbody>` +
-      days.map((d, i) => `<tr><td>${dayKey(d)}</td><td>${vals[i].n}</td><td>${vals[i].c}</td></tr>`).join("") + "</tbody>";
-    wireTips($("#actBars"));
+    $(`#${prefix}Axis`).innerHTML = rows.map((r, i) => `<span${i === rows.length - 1 ? ' style="color:var(--fg);font-weight:600"' : ""}>${i === rows.length - 1 ? "today" : r.date.getDate()}</span>`).join("");
+    $(`#${prefix}Table`).innerHTML = `<caption>${esc(caption)}</caption><thead><tr><th>Day</th><th>Answered</th><th>Right</th></tr></thead><tbody>` +
+      rows.map(r => `<tr><td>${r.key}</td><td>${r.n}</td><td>${r.c}</td></tr>`).join("") + "</tbody>";
+    wireTips(bars);
+  }
+
+  // ---------- everyone on the site (anonymous totals from live.js) ----------
+  let community = null; // last rows from the server
+  async function loadCommunity() {
+    if (!window.LIVE || !LIVE.enabled) return;
+    try { community = await LIVE.stats(); } catch (e) { community = community || null; }
+    renderCommunity();
+  }
+  function renderCommunity() {
+    const sec = $("#community");
+    const L = window.LIVE && LIVE.last;
+    if (!window.LIVE || !LIVE.enabled || (!community && !L)) { sec.hidden = true; return; }
+    sec.hidden = false;
+    const rows = community || [];
+    const today = LIVE.amsDay(0);
+    const sum = (f, pick) => rows.filter(f).reduce((s, r) => s + (r[pick] || 0), 0);
+    const ansToday = sum(r => r.day === today && r.course !== "site", "answered");
+    const okToday = sum(r => r.day === today && r.course !== "site", "correct");
+    const site = rows.find(r => r.day === today && r.course === "site") || { sessions: 0, peak_online: 0 };
+    const allTime = sum(r => r.course !== "site", "answered");
+    const daysLive = new Set(rows.map(r => r.day)).size;
+    const tiles = [
+      ["Studying right now", L ? L.online : "–", L ? `${L.ai} on Intro to AI · ${L.psy} on Psychology` : "connecting…"],
+      ["Answered today", ansToday.toLocaleString("en"), ansToday ? `${pct(okToday / ansToday)} right, by everyone` : "be the first today"],
+      ["Study sessions today", site.sessions.toLocaleString("en"), `busiest moment: ${site.peak_online} at once`],
+      ["Answered all time", allTime.toLocaleString("en"), daysLive ? `over ${plural(daysLive, "day")}` : "counting starts now"]
+    ];
+    $("#commStats").innerHTML = tiles.map(([k, v, s]) => `<div class="card stat"><span>${esc(k)}</span><b>${esc(String(v))}</b><small>${esc(s)}</small></div>`).join("");
+    const days = [];
+    for (let k = 13; k >= 0; k--) {
+      const key = LIVE.amsDay(k);
+      const [y, m, d] = key.split("-").map(Number);
+      days.push({ key, date: new Date(y, m - 1, d), n: sum(r => r.day === key && r.course !== "site", "answered"), c: sum(r => r.day === key && r.course !== "site", "correct") });
+    }
+    barChart("comm", days, "Questions answered by everyone per day, last 14 days", "No answers");
   }
 
   // ---------- achievements ----------
@@ -200,7 +244,12 @@
     APP.resetAll(); renderAll(); APP.toast("Progress cleared", "Everything is back to zero.");
   };
   APP.onChange(renderAll);
-  window.addEventListener("pageshow", e => { if (e.persisted) renderAll(); });
+  window.addEventListener("pageshow", e => { if (e.persisted) { renderAll(); loadCommunity(); } });
+  if (window.LIVE && LIVE.enabled) {
+    LIVE.onUpdate(renderCommunity);
+    loadCommunity();
+    setInterval(() => { if (document.visibilityState === "visible") loadCommunity(); }, 60000);
+  }
 
   APP.checkBadges(); APP.save();
   renderAll();

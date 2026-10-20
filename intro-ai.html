@@ -31,6 +31,7 @@
   <div class="controls">
     <button class="btn sm" id="shuffle" type="button">Shuffle</button>
     <button class="btn sm" id="missed" type="button">Retry mistakes</button>
+    <button class="btn sm" id="jump" type="button">Next unanswered ↓</button>
     <span class="spacer"></span>
     <button class="btn sm ghost" id="reset" type="button">Reset course</button>
   </div>
@@ -41,31 +42,8 @@
     <button class="btn primary" id="doneNext" type="button">Next lecture</button>
   </div>
 
-  <article class="card qcard" id="card" aria-live="polite">
-    <div class="qmeta" id="qmeta"></div>
-    <h2 class="prompt" id="prompt"></h2>
-    <div id="figure" hidden></div>
-    <ol class="opts" id="opts"></ol>
-    <p class="hintbox" id="hint" hidden></p>
-    <div class="feedback" id="feedback" hidden>
-      <span class="verdict" id="verdict"></span>
-      <p id="explain"></p>
-    </div>
-    <div class="qnav">
-      <button class="btn" id="prev" type="button">Previous</button>
-      <button class="btn" id="hintBtn" type="button">Show hint</button>
-      <button class="btn primary" id="next" type="button">Next</button>
-      <span class="keys"></span>
-    </div>
-  </article>
-
-  <section class="section">
-    <div class="section-h">
-      <h2>Question map</h2>
-      <div class="legend"><span><i></i>Not answered</span><span><i class="lg"></i>Correct</span><span><i class="lr"></i>Wrong</span></div>
-    </div>
-    <details class="mapbox" id="mapbox" open><summary>Question map</summary><div class="map" id="map"></div></details>
-  </section>
+  <div class="qlist" id="list" aria-label="Questions"></div>
+  <button class="btn more-btn" id="more" type="button" hidden>Show more</button>
 
   <section class="section">
     <div class="section-h"><h2>Score by lecture</h2><span class="aside">Click a row to practise that lecture</span></div>
@@ -75,13 +53,14 @@
 
 <footer class="foot">
   <p><b>Unofficial.</b> Made by students for students. Not affiliated with or endorsed by Vrije Universiteit Amsterdam. Questions are based on the 2026–2027 course material and may contain mistakes, so check anything that looks off against the lecture slides.</p>
-  <p>Your progress is stored only in this browser. No account, no tracking.</p>
+  <p>Your progress is stored only in this browser, with no account. The site only shares anonymous totals (+1 per answer, and how many people are studying right now). No names, emails or IDs.</p>
   <p>Spotted a wrong answer or a typo? <a href="https://github.com/youngpietro/bsc-ai-practice/issues/new" target="_blank" rel="noopener">Report it on GitHub</a>.</p>
 </footer>
 
 <script src="data/ai-data.js"></script>
 <script src="data/psych-data.js"></script>
 <script src="assets/core.js"></script>
+<script src="assets/live.js"></script>
 <script src="assets/quiz.js"></script>
 </body>
 </html>

@@ -354,21 +354,32 @@ details.topics[open] > summary::before { content: "▾ "; }
 .verdict { font-weight: 700; }
 .feedback.ok .verdict { color: var(--good); }
 .feedback.no .verdict { color: var(--bad); }
-.qnav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.keys { font: 400 .74rem var(--f-mono); color: var(--muted); margin-left: auto; }
-.map { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px; }
-.cell {
-  height: 34px; border: 1px solid var(--line); background: var(--surface); border-radius: 6px;
-  font: 400 .76rem var(--f-mono); font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; color: var(--muted);
+
+/* All questions in one list; answered cards get a coloured left edge so results are easy to scan */
+.qlist { display: flex; flex-direction: column; gap: 14px; }
+.qcard { scroll-margin-top: 90px; }
+.qcard.is-ok { box-shadow: inset 4px 0 0 var(--good), var(--shadow); }
+.qcard.is-no { box-shadow: inset 4px 0 0 var(--bad), var(--shadow); }
+.qn {
+  min-width: 26px; height: 22px; padding: 0 6px; border-radius: 5px; display: inline-grid; place-items: center;
+  background: var(--surface-2); color: var(--fg); box-shadow: inset 0 0 0 1px var(--line); font-weight: 600;
 }
-.cell.ok { background: var(--good-soft); border-color: var(--good); color: var(--good); }
-.cell.no { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
-.cell.cur { outline: 2px solid var(--accent); outline-offset: 1px; }
-.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .8rem; color: var(--muted); }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--line); }
-.legend .lg { background: var(--good-soft); border-color: var(--good); }
-.legend .lr { background: var(--bad-soft); border-color: var(--bad); }
-details.mapbox > summary { cursor: pointer; font-size: .88rem; color: var(--accent); font-weight: 500; }
+.qstats .flag, .qmeta .flag { color: var(--bad); }
+.more-btn { align-self: center; }
+
+/* Live "studying now" chip in the top bar */
+.live-chip {
+  display: inline-flex; align-items: center; gap: 6px; font: 500 12px var(--f-mono); color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; background: var(--surface); white-space: nowrap;
+}
+.live-chip b { color: var(--fg); font-weight: 600; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 var(--good); }
+@media (prefers-reduced-motion: no-preference) {
+  .pulse { animation: pulse 2s ease-out infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); } 100% { box-shadow: 0 0 0 7px transparent; } }
+}
+.live-chip .short { display: none; }
+@media (max-width: 600px) { .live-chip .long { display: none; } .live-chip .short { display: inline; } }
 
 /* Psychology figures (SVG charts and tables) */
 .fig { border: 1px solid var(--line); border-radius: 10px; padding: 10px; overflow-x: auto; background: var(--surface-2); }
@@ -396,9 +407,8 @@ details.mapbox > summary { cursor: pointer; font-size: .88rem; color: var(--acce
 @media (max-width: 520px) {
   .qcard { padding: 16px; }
   .prompt { font-size: 1.08rem; }
-  .keys { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .opt, .cell, .btn, .chip, .navlinks a { transition: border-color .12s, background-color .12s, color .12s; }
+  .opt, .btn, .chip, .navlinks a { transition: border-color .12s, background-color .12s, color .12s; }
   .pbar i, .act-bars span { transition: width .3s ease, height .3s ease; }
 }

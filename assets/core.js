@@ -112,6 +112,7 @@
     let goalReached = false;
     if (day.n >= S.profile.goal && S.flags.goalDay !== dk) { S.flags.goalDay = dk; goalReached = true; }
     save();
+    if (window.LIVE) window.LIVE.recordAnswer(qid.split(":")[0], ok); // anonymous +1 to the site-wide total
     return { unlocked, goalReached, comeback };
   }
   function clearAnswers(ids) { ids.forEach(id => { delete S.ans[id]; }); save(); }
@@ -285,6 +286,7 @@
     host.innerHTML = `<div class="topbar-in">
       <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">AI</span><span>BSc AI Practice<small>${TERM.year} · ${TERM.period}</small></span></a>
       <nav class="navlinks" aria-label="Main">${links.map(([id, href, label]) => `<a href="${href}"${id === here ? ' aria-current="page"' : ""}>${esc(label)}</a>`).join("")}</nav>
+      <span class="live-chip" id="liveChip" hidden></span>
       <a class="today-chip" href="index.html" title="Questions answered today / your daily goal">${S.profile.name ? esc(S.profile.name) + " · " : ""}today <b>${t}</b>/${g}</a>
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to ${effectiveTheme() === "dark" ? "light" : "dark"} mode">${effectiveTheme() === "dark" ? ICON_SUN : ICON_MOON}</button>
     </div>`;
@@ -292,6 +294,19 @@
       S.settings.theme = effectiveTheme() === "dark" ? "light" : "dark";
       save(); applyTheme(); renderTopbar();
     };
+    renderLiveChip();
+  }
+
+  // "● 12 studying now", filled by live.js once the server answers
+  function renderLiveChip() {
+    const el = $("#liveChip");
+    const L = window.LIVE && window.LIVE.last;
+    if (!el) return;
+    if (!L || window.LIVE.failed) { el.hidden = true; return; }
+    const rest = Math.max(0, L.online - L.ai - L.psy);
+    el.hidden = false;
+    el.title = `${L.ai} on Intro to AI · ${L.psy} on Psychology · ${rest} on the dashboard. Updates every minute.`;
+    el.innerHTML = `<i class="pulse" aria-hidden="true"></i><b>${L.online}</b> <span class="long">studying now</span><span class="short">online</span>`;
   }
 
   // ---------- toast ----------
@@ -330,7 +345,7 @@
     TERM, COURSES, courseById, BADGES, LEVEL_LABEL,
     get S() { return S; }, save, onChange: f => listeners.push(f),
     recordAnswer, clearAnswers, courseStats, lifetime, dayStreak, todayCount, checkBadges, suggestions, examInfo,
-    renderTopbar, toast, announce, exportData, importData, resetAll,
+    renderTopbar, renderLiveChip, toast, announce, exportData, importData, resetAll,
     util: { $, esc, pct, plural, dayKey, slug }
   };
 })();
